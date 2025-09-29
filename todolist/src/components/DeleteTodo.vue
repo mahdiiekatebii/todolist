@@ -4,11 +4,13 @@
       :class="[model.status == true ? 'flex' : 'hidden']"
   >
     <div class="relative p-4 md:max-w-1/4 w-full max-h-full">
-      <div class="relative bg-white rounded-3xl shadow-sm dark:bg-gray-700">
+      <div class="relative  rounded-3xl shadow-sm "
+           :class="[theme.theme =='dark' ? 'bg-[#252525] text-white border-1 border-white' : 'bg-white text-gray-900']"
+      >
         <div
             class="flex items-center justify-center p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-200"
         >
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h3 class="text-2xl font-bold ">
             Delete NOTE
           </h3>
         </div>
@@ -35,10 +37,7 @@
                   <span class="text-center text-sm font-bold text-white dark:text-blue-500">{{ startTime }}</span>
                 </div>
               </div>
-
-
               UNDO
-
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                    stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -55,6 +54,7 @@
 </template>
 <script setup>
 import {useTodolist} from "../stores/todo";
+import {useTheme} from "../stores/theme";
 
 import {ref, watch} from "vue";
 
@@ -64,6 +64,7 @@ let dashoffset = ref(0)
 const todo = useTodolist();
 let model = defineModel({status: '', update: ""});
 const props = defineProps(["id"]);
+let theme = useTheme();
 
 watch(
     () => [props.id],
@@ -81,11 +82,8 @@ function closeModal() {
 function counterDown() {
   timer = setInterval(() => {
     startTime.value -= 1
-    console.log(startTime.value, "log")
     dashoffset.value = dashoffset.value + 33.33333333333333
-    console.log(dashoffset.value, "dashoffset")
     if (startTime.value === 0) {
-      console.log("Running...")
       todo.deleteTodo(props.id);
       const data = window.localStorage.getItem("todoList");
       model.value.update = JSON.parse(data)

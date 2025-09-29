@@ -4,11 +4,13 @@
       :class="[model.status == true ? 'flex' : 'hidden']"
   >
     <div class="relative p-4 md:max-w-1/4 w-full max-h-full">
-      <div class="relative bg-white rounded-3xl shadow-sm dark:bg-gray-700">
+      <div class="relative  rounded-3xl shadow-sm "
+           :class="[theme.theme =='dark' ? 'bg-[#252525] text-white border-1 border-white' : 'bg-white text-gray-900']"
+      >
         <div
             class="flex items-center justify-center p-4 md:p-5 rounded-t dark:border-gray-600 border-gray-200"
         >
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h3 class="text-2xl font-bold ">
             EDIT NOTE
           </h3>
         </div>
@@ -18,14 +20,14 @@
             <div class="col-span-2">
               <label
                   for="name"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  class="block mb-2 text-sm font-medium "
               >edit Task</label
               >
               <input
                   @input="handleTaskInput"
                   :value="task"
                   type="text"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  class=" border border-gray-300  text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400  dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="input your note..."
               />
             </div>
@@ -33,7 +35,7 @@
             <div class="col-span-2">
               <label
                   for="name"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  class="block mb-2 text-sm font-medium "
               >category</label
               >
               <button
@@ -84,13 +86,13 @@
           <div class="flex justify-between mt-10">
             <button
                 @click="closeModal"
-                class="cursor-pointer inline-flex items-center border-1 border-[#6C63FF] text-[#6C63FF] rounded-lg text-md font-bold px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                class="cursor-pointer inline-flex items-center border-1 border-[#6C63FF] text-[#6C63FF] rounded-lg text-md font-bold px-5 py-2.5 text-center "
             >
               CANCEL
             </button>
             <button
                 @click="handleEditTodo"
-                class="cursor-pointer text-white inline-flex items-center bg-[#6C63FF] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                class="cursor-pointer text-white inline-flex items-center bg-[#6C63FF] focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 text-center "
             >
               APPLY
             </button>
@@ -102,14 +104,14 @@
 </template>
 <script setup>
 import {useTodolist} from "../stores/todo";
-// import Modal from "./Modal.vue";
+import {useTheme} from "../stores/theme";
 import {ref, watch} from "vue";
 
 let dropDownCategory = ref(false);
 const todo = useTodolist();
 let task = ref("");
 let model = defineModel({status:'',update:""});
-
+let theme=useTheme()
 let labelCategory = ref("work");
 const props = defineProps(["id"]);
 
@@ -132,7 +134,6 @@ const categoryData = ref([
   { id: 3, name: "Projects" },
 ]);
 function dropDown() {
-  console.log(dropDownCategory.value);
   dropDownCategory.value = !dropDownCategory.value;
 }
 
@@ -146,6 +147,7 @@ function handleTaskInput(e) {
 
 function selectedCategory(category) {
   labelCategory.value = category.name;
+  dropDownCategory.value=false
 }
 
 function handleEditTodo() {

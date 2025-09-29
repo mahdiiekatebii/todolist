@@ -1,6 +1,10 @@
 <template>
-  <div class="w-auto m-auto pt-24 relative h-screen">
-    <h1 class="text-center text-4xl font-bold mb-8">Todo List</h1>
+  <div class="w-auto m-auto pt-24 relative h-screen "
+       :class="[themes =='dark' ? 'bg-[#252525]' : 'bg-white']"
+  >
+    <h1 class="text-center text-4xl font-bold mb-8"
+        :class="[themes =='dark' ? 'text-white' : 'text-dark']"
+    >Todo List</h1>
 
     <div class="flex gap-8 justify-center items-center w-full">
       <label
@@ -11,6 +15,24 @@
       <div class="relative w-[595px]">
         <div
             class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+        >
+
+        </div>
+        <input
+            :value="searchInput"
+            class="block w-full h-[38px] p-4 ps-10 text-sm outline-none   border border-gray-300 rounded-lg  focus:ring-[#534CC2] focus:border-[#534CC2]  dark:border-gray-600  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            :class="[themes =='dark' ? 'text-white' : 'text-dark']"
+            placeholder="Search note..."
+            required
+            @input="handleSearch"
+        />
+        <button
+            @click="searchTodo"
+            type="submit"
+            class="text-white absolute end-2.5 bottom-1
+             focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg
+             text-sm px-4 py-2 "
+            :class="[themes =='dark' ? 'bg-dark ' : 'bg-white']"
         >
           <svg
               class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -27,20 +49,7 @@
                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
             />
           </svg>
-        </div>
-        <input
-            type="search"
-            :value="searchInput"
-            class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search"
-            required
-            @input="handleSearch"
-        />
-        <button
-            type="submit"
-            class="text-white absolute end-2.5 bottom-2.5 bg-[#6C63FF] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Search
+
         </button>
       </div>
 
@@ -48,7 +57,7 @@
       <div>
         <button
             @click="handleDropDown"
-            class="text-white bg-[#6C63FF] cursor-pointer hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            class="text-white w-[5.813rem]  bg-[#6C63FF] cursor-pointer hover:bg-[#534CC2] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             type="button"
         >
           {{ labelCategory }}
@@ -74,17 +83,17 @@
             :class="[dropDown == true ? 'flex' : 'hidden']"
         >
           <ul
-              class="py-2 text-sm text-gray-700 dark:text-gray-200 w-3xs absolute bg-white border-1 border-gray-100"
+              class="py-2 text-sm  dark:text-gray-200  absolute bg-white border-1 border-[#534CC2] rounded-lg w-[5.813rem] text-[#534cc2]"
           >
             <li @click="selectedCategory('all')">
               <a
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                  class="block px-4 py-2 hover:bg-[#d8d5f7] text-sm dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
               >All</a
               >
             </li>
             <li v-for="c in categoryData" @click="selectedCategory(c)">
               <a
-                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                  class="block px-4 py-2 hover:bg-[#d8d5f7] text-sm dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
               >{{ c.name }}</a
               >
             </li>
@@ -93,16 +102,19 @@
       </div>
       <!--dark & light-->
       <button
+
           type="button"
-          class="text-white bg-[#6C63FF] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="text-white  cursor-pointer bg-[#6C63FF] hover:bg-[#534CC2] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         <svg
+            @click="changeTheme('light')"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
             class="size-6"
+            :class="[theme.theme === 'dark' ? 'flex' : 'hidden']"
         >
           <path
               stroke-linecap="round"
@@ -110,18 +122,15 @@
               d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
           />
         </svg>
-      </button>
-      <button
-          type="button"
-          class="text-white bg-[#6C63FF] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
         <svg
+            @click="changeTheme('dark')"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
             class="size-6"
+            :class="[theme.theme === 'light' ? 'flex' : 'hidden']"
         >
           <path
               stroke-linecap="round"
@@ -134,6 +143,8 @@
 
     <!-- todos-->
     <div class="flex justify-center cursor-pointer flex-col items-center">
+      <img src="./assets/pick.png" alt="" class="w-3xs" :class="[todoLists?.length > 0 ? 'hidden' :'flex']"/>
+      <p :class="[todoLists?.length > 0 ? 'hidden' :'flex',theme.theme === 'dark' ? 'text-white' :'text-black']" class="text-2xl ">Empty...</p>
       <div
           class="flex justify-between items-center border-b-[#8b85f5e6] border-b-1 pb-3 w-[520px] mt-8"
           v-for="task in todoLists"
@@ -147,17 +158,19 @@
                 :value="task.id"
                 v-model="task.completed"
                 @input="handleChangeCheckBox"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                class="w-4 h-4 text-[#8b85f5e6]  bg-gray-100 border-gray-300 rounded-sm  dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
           <div class="ms-2 text-sm">
             <label
                 class="font-medium"
-                :class="[task.completed ? 'line-through text-gray-400' : '']"
+
+                :class="[task.completed ? 'line-through text-gray-400' : '',theme.theme ==='dark' ? 'text-white' : 'text-dark' ]"
             >{{ task.task }}</label
             >
           </div>
         </div>
+
         <div class="flex justify-center items-center gap-2">
           <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +178,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="size-5 text-gray-300 cursor-pointer"
+              class="size-5 text-gray-300 cursor-pointer hover:text-[#8b85f5e6]"
               @click="openModalEdit(task.id)"
           >
             <path
@@ -180,7 +193,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="size-5 text-gray-300 cursor-pointer"
+              class="size-5 text-gray-300 cursor-pointer hover:text-red-600"
               @click="openModalDelete(task.id)"
           >
             <path
@@ -208,11 +221,11 @@
           d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
       />
     </svg>
-    <div :class="[modal == true ? 'flex' : 'hidden']">
-      <AddTodo v-model="modal"/>
+    <div :class="[addModal.status == true ? 'flex' : 'hidden']">
+      <AddTodo v-model="addModal"/>
     </div>
     <div :class="[editModal.status == true ? 'flex' : 'hidden']">
-      <EditTodo v-model="editModal" :id="todoId"/>
+      <EditTodo v-model="editModal" :id="todoIdEdit"/>
     </div>
     <div :class="[deleteModal.status == true ? 'flex' : 'hidden']">
       <DeleteTodo v-model="deleteModal" :id="todoId"/>
@@ -228,12 +241,21 @@ import AddTodo from "./components/AddTodo.vue";
 import EditTodo from "./components/EditTodo.vue";
 import DeleteTodo from "./components/DeleteTodo.vue";
 import {useTodolist} from "./stores/todo";
+import {useTheme} from "./stores/theme";
 import {ref, watch} from "vue";
 
 const todo = useTodolist();
+const theme = useTheme();
 let labelCategory = ref("work");
 let dropDown = ref(false);
-let modal = ref(false);
+
+
+let addModal = ref({
+  status: false,
+  update: ""
+});
+
+
 let editModal = ref({
   status: false,
   update: ""
@@ -245,8 +267,12 @@ let deleteModal = ref({
 });
 
 let todoId = ref("");
+let todoIdEdit = ref("");
 let searchInput = ref("");
 let todoLists = ref([]);
+
+
+let themes = ref("")
 
 const categoryData = ref([
   {id: 1, name: "work"},
@@ -269,14 +295,15 @@ function selectedCategory(category) {
         (item) => item.category === labelCategory.value
     );
   }
+  dropDown.value=false
 }
 
 function openModalAdd() {
-  modal.value = true;
+  addModal.value.status = true;
 }
 
 function openModalEdit(id) {
-  todoId.value = id;
+  todoIdEdit.value = id;
   editModal.value.status = true
 }
 
@@ -292,6 +319,19 @@ function showTodoList() {
 
 showTodoList();
 
+function changeTheme(t) {
+  if (t === 'light') {
+    theme.lightTheme()
+    const themeLocal = window.localStorage.getItem("theme");
+    themes.value = JSON.parse(themeLocal);
+  } else {
+    theme.darkTheme()
+    const themeLocal = window.localStorage.getItem("theme");
+    themes.value = JSON.parse(themeLocal);
+  }
+
+}
+
 function handleChangeCheckBox(e) {
   const id = e.target.value;
   todo.completedTodo(id);
@@ -301,11 +341,25 @@ function handleChangeCheckBox(e) {
 
 function handleSearch(e) {
   searchInput.value = e.target.value;
+if(searchInput.value === ""){
+  showTodoList();
+}
+}
+function searchTodo(){
+  const data = window.localStorage.getItem("todoList");
+  const jsonParse = JSON.parse(data);
+  todoLists.value=[]
+  for (let i = 0; i < jsonParse.length; i++) {
+    if(jsonParse[i].task.includes(searchInput.value)){
+
+      todoLists.value.push(jsonParse[i]);
+    }
+  }
 }
 
 
 watch(
-    () => [editModal.value.update,deleteModal.value.update],
+    () => [editModal.value.update, deleteModal.value.update,addModal.value.update],
     () => {
       const data = window.localStorage.getItem("todoList");
       todoLists.value = JSON.parse(data);
@@ -314,8 +368,6 @@ watch(
 );
 
 
-function searchTodo() {
-}
 </script>
 
 <style></style>

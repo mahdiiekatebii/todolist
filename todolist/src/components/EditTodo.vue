@@ -1,7 +1,7 @@
 <template>
   <div
       class="flex overflow-y-auto overflow-x-hidden fixed bg-[#434343b3] top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-      :class="[model == true ? 'flex' : 'hidden']"
+      :class="[model.status == true ? 'flex' : 'hidden']"
   >
     <div class="relative p-4 md:max-w-1/4 w-full max-h-full">
       <div class="relative bg-white rounded-3xl shadow-sm dark:bg-gray-700">
@@ -13,7 +13,7 @@
           </h3>
         </div>
         <!-- Modal body -->
-        <form class="p-4 md:p-5">
+        <div class="p-4 md:p-5">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
               <label
@@ -22,6 +22,7 @@
               >edit Task</label
               >
               <input
+                  @input="handleTaskInput"
                   :value="task"
                   type="text"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -83,46 +84,44 @@
           <div class="flex justify-between mt-10">
             <button
                 @click="closeModal"
-                type="submit"
                 class="cursor-pointer inline-flex items-center border-1 border-[#6C63FF] text-[#6C63FF] rounded-lg text-md font-bold px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               CANCEL
             </button>
             <button
-                @click="handleAddTodo(task)"
-                type="submit"
+                @click="handleEditTodo"
                 class="cursor-pointer text-white inline-flex items-center bg-[#6C63FF] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               APPLY
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { useTodolist } from "../store/todo";
+import {useTodolist} from "../stores/todo";
 // import Modal from "./Modal.vue";
-import { ref, watch } from "vue";
+import {ref, watch} from "vue";
 
 let dropDownCategory = ref(false);
 const todo = useTodolist();
 let task = ref("");
-let model = defineModel();
+let model = defineModel({status:'',update:""});
+
 let labelCategory = ref("work");
 const props = defineProps(["id"]);
 
 watch(
-    () => [props.value],
+    () => [props.id],
     () => {
       const data = window.localStorage.getItem("todoList");
-      const parseData = JSON.parse(data);
-      console.log(parseData, "data", props.value);
-      const findTodo = parseData.find((item) => item.id === props.value);
-      console.log(findTodo, "log");
+      const parsData = JSON.parse(data);
+      const findTodo = parsData.find((item) => item.id === props.id);
       task.value = findTodo.task;
-      console.log(task.value);
+      labelCategory.value = findTodo.category;
+
     },
     {}
 );
@@ -137,16 +136,23 @@ function dropDown() {
   dropDownCategory.value = !dropDownCategory.value;
 }
 
-// function closeModal() {
-//   model.value = !model.value;
-// }
+function closeModal() {
+  model.value.status = !model.value.status;
+}
+
+function handleTaskInput(e) {
+  task.value = e.target.value;
+}
 
 function selectedCategory(category) {
   labelCategory.value = category.name;
 }
 
-function handleAddTodo() {
-  todo.addTodo(task.value, labelCategory.value);
+function handleEditTodo() {
+  closeModal()
+  todo.editTodo(props.id,task.value, labelCategory.value);
+  const data = window.localStorage.getItem("todoList");
+  model.value.update=JSON.parse(data)
 }
 </script>
 <style scoped></style>

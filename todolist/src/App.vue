@@ -70,11 +70,11 @@
         </button>
         <div
             id="dropdown"
-            class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700"
+            class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm  dark:bg-gray-700"
             :class="[dropDown == true ? 'flex' : 'hidden']"
         >
           <ul
-              class="py-2 text-sm text-gray-700 dark:text-gray-200 w-full absolute bg-white border-1 border-gray-100"
+              class="py-2 text-sm text-gray-700 dark:text-gray-200 w-3xs absolute bg-white border-1 border-gray-100"
           >
             <li @click="selectedCategory('all')">
               <a
@@ -181,6 +181,7 @@
               stroke-width="1.5"
               stroke="currentColor"
               class="size-5 text-gray-300 cursor-pointer"
+              @click="openModalDelete(task.id)"
           >
             <path
                 stroke-linecap="round"
@@ -208,10 +209,16 @@
       />
     </svg>
     <div :class="[modal == true ? 'flex' : 'hidden']">
-      <AddTodo v-model="modal" />
+      <AddTodo v-model="modal"/>
     </div>
-    <div :class="[editModal == true ? 'flex' : 'hidden']">
-      <EditTodo v-model="editModal" :id="editId" />
+    <div :class="[editModal.status == true ? 'flex' : 'hidden']">
+      <EditTodo v-model="editModal" :id="todoId"/>
+    </div>
+    <div :class="[deleteModal.status == true ? 'flex' : 'hidden']">
+      <DeleteTodo v-model="deleteModal" :id="todoId"/>
+    </div>
+    <div>
+
     </div>
   </div>
 </template>
@@ -219,22 +226,32 @@
 <script setup>
 import AddTodo from "./components/AddTodo.vue";
 import EditTodo from "./components/EditTodo.vue";
-import { useTodolist } from "./store/todo";
-import { ref } from "vue";
+import DeleteTodo from "./components/DeleteTodo.vue";
+import {useTodolist} from "./stores/todo";
+import {ref, watch} from "vue";
 
 const todo = useTodolist();
 let labelCategory = ref("work");
 let dropDown = ref(false);
 let modal = ref(false);
-let editModal = ref(false);
-let editId = ref("");
+let editModal = ref({
+  status: false,
+  update: ""
+});
+
+let deleteModal = ref({
+  status: false,
+  update: ""
+});
+
+let todoId = ref("");
 let searchInput = ref("");
 let todoLists = ref([]);
 
 const categoryData = ref([
-  { id: 1, name: "work" },
-  { id: 2, name: "personal" },
-  { id: 3, name: "Projects" },
+  {id: 1, name: "work"},
+  {id: 2, name: "personal"},
+  {id: 3, name: "Projects"},
 ]);
 
 function handleDropDown() {
@@ -257,30 +274,48 @@ function selectedCategory(category) {
 function openModalAdd() {
   modal.value = true;
 }
+
 function openModalEdit(id) {
-  editId.value = id;
-  console.log(id, "id app");
-  editModal.value = true;
+  todoId.value = id;
+  editModal.value.status = true
+}
+
+function openModalDelete(id) {
+  todoId.value = id;
+  deleteModal.value.status = true
 }
 
 function showTodoList() {
   const data = window.localStorage.getItem("todoList");
   todoLists.value = JSON.parse(data);
 }
+
 showTodoList();
 
 function handleChangeCheckBox(e) {
   const id = e.target.value;
-  todo.complateTodo(id);
+  todo.completedTodo(id);
   const data = window.localStorage.getItem("todoList");
   todoLists.value = JSON.parse(data);
-  console.log(todoLists);
 }
 
 function handleSearch(e) {
   searchInput.value = e.target.value;
 }
-function searchTodo() {}
+
+
+watch(
+    () => [editModal.value.update,deleteModal.value.update],
+    () => {
+      const data = window.localStorage.getItem("todoList");
+      todoLists.value = JSON.parse(data);
+    },
+    {}
+);
+
+
+function searchTodo() {
+}
 </script>
 
 <style></style>

@@ -20,24 +20,22 @@ export const useTodolist = defineStore("task", {
             });
             window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
         },
-        complateTodo(id) {
+        completedTodo(id) {
             const FindId = this.todoList.find((item) => item.id === Number(id));
-            console.log("find", FindId);
             FindId ? (FindId.completed = !FindId.completed) : "";
             window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
         },
-        editTodo(task) {
-            task.push(...this.todoList, {
-                id: task.id,
-                task: task.task,
-                category: task.category,
-                completed: false,
-            });
+        editTodo(id,task, category) {
+            const findItem = this.todoList.find((item) => item.id === Number(id));
+            findItem ? (findItem.task = task) : "";
+            findItem ? (findItem.category = category) : "";
+            window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
         },
         deleteTodo(id) {
             this.todoList = this.todoList.filter((object) => {
                 return object.id !== id;
             });
+            window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
         },
     },
 });

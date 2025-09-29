@@ -1,0 +1,43 @@
+import { defineStore } from "pinia";
+
+export const useTodolist = defineStore("task", {
+    state: () => {
+        const savedTodos = window.localStorage.getItem("todoList");
+        const todoList = savedTodos ? JSON.parse(savedTodos) : [];
+        const id = todoList.length;
+        return {
+            todoList,
+            id,
+        };
+    },
+    actions: {
+        addTodo(task, category) {
+            this.todoList.push({
+                id: this.id++,
+                task: task,
+                category: category,
+                completed: false,
+            });
+            window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
+        },
+        complateTodo(id) {
+            const FindId = this.todoList.find((item) => item.id === Number(id));
+            console.log("find", FindId);
+            FindId ? (FindId.completed = !FindId.completed) : "";
+            window.localStorage.setItem("todoList", JSON.stringify(this.todoList));
+        },
+        editTodo(task) {
+            task.push(...this.todoList, {
+                id: task.id,
+                task: task.task,
+                category: task.category,
+                completed: false,
+            });
+        },
+        deleteTodo(id) {
+            this.todoList = this.todoList.filter((object) => {
+                return object.id !== id;
+            });
+        },
+    },
+});
